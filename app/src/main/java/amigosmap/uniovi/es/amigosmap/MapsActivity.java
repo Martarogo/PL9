@@ -8,15 +8,31 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class MapsActivity extends FragmentActivity {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
+    private final String LIST_URL = "http://localhost:54321/api/amigo/";
+    private final int UPDATE_PERIOD = 3000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         setUpMapIfNeeded();
+
+        Timer timer = new Timer();
+        TimerTask updateAmigos = new UpdateAmigoPosition();
+        timer.scheduleAtFixedRate(updateAmigos, 0, UPDATE_PERIOD);
+    }
+
+    class UpdateAmigoPosition extends TimerTask {
+        public void run() {
+            new ShowAmigosTask().execute(LIST_URL);
+        }
     }
 
     @Override
@@ -61,5 +77,11 @@ public class MapsActivity extends FragmentActivity {
      */
     private void setUpMap() {
         mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
+    }
+
+    public void SetPositions(List<Amigo> amigosList) {
+        for (Amigo amigo: amigosList) {
+            mMap.addMarker(new MarkerOptions().position(new LatLng(amigo.GetLatitude(), amigo.GetLongitude())).title(amigo.GetName()));
+        }
     }
 }
