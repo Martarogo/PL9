@@ -2,6 +2,7 @@ package amigosmap.uniovi.es.amigosmap;
 
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -14,9 +15,10 @@ import java.util.TimerTask;
 
 public class MapsActivity extends FragmentActivity {
 
-    private GoogleMap mMap; // Might be null if Google Play services APK is not available.
-    private final String LIST_URL = "http://localhost:54321/api/amigo/";
-    private final int UPDATE_PERIOD = 3000;
+    private static GoogleMap mMap; // Might be null if Google Play services APK is not available.
+    private final String IP = "192.168.0.12";
+    private final String LIST_URL = "http://" + IP + ":54321/api/amigo/";
+    private final int UPDATE_PERIOD = 60000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +66,8 @@ public class MapsActivity extends FragmentActivity {
                     .getMap();
             // Check if we were successful in obtaining the map.
             if (mMap != null) {
-                setUpMap();
+                //setUpMap();
+                Toast.makeText(getApplicationContext(), "Mapa cargado", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -76,12 +79,13 @@ public class MapsActivity extends FragmentActivity {
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
-        mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
+        //mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
     }
 
     public void SetPositions(List<Amigo> amigosList) {
         for (Amigo amigo: amigosList) {
             mMap.addMarker(new MarkerOptions().position(new LatLng(amigo.GetLatitude(), amigo.GetLongitude())).title(amigo.GetName()));
         }
+
     }
 }
